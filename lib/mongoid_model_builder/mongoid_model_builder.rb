@@ -2,6 +2,10 @@ module Mongoid
   module ModelBuilder
     class << self
       # Load models definitions from Ruby configuration Array or file.
+      def code
+        code ||= []
+      end
+
       def load models, options = {}
 
         # Try to read file if a String is provided
@@ -10,16 +14,14 @@ module Mongoid
         raise "Models list must be an Array or a ruby file containing an Array" unless models.is_a? Array
 
         result = []
-        @code  = []
+        code  = []
         models.each do |model|
           result << build(model, options[:force])
         end
 
-        return @code.join("\n") if options[:code]
+        return code.join("\n") if options[:code]
         return result
       end
-
-      private
 
       # Build a model class
       def build model, force
@@ -34,7 +36,7 @@ module Mongoid
 
         # Create model class
         @model = Object.const_set model[:name], Class.new(parent)
-        @code << "class #{model[:name]} < #{parent}"
+        code << "class #{model[:name]} < #{parent}"
 
         # Include Mongoid::Document by default
         includes = %w(Mongoid::Document)
@@ -46,17 +48,18 @@ module Mongoid
         add_includes includes
         add_fields model[:fields]
 
-        @code << 'end'
+        code << 'end'
 
         return @model
       end
 
+      private
       # Appends code to current model class
       def model_append source
         source = source.join("\n") if source.is_a? Array
         raise "model_append only accepts String or Array source (#{source.class} provided)" unless source.is_a? String
         @model.class_eval source
-        @code << source
+        code << source
       end
 
       # Adds class includes to current model class
@@ -76,7 +79,7 @@ module Mongoid
           add_field field
         end
       end
-      
+
       # Add field to current model class
       def add_field field
         raise "Field must be a Hash (#{field.class} provided)" unless field.is_a? Hash
