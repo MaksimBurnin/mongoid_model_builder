@@ -3,7 +3,7 @@ module Mongoid
     class << self
       # Load models definitions from Ruby configuration Array or file.
       def code
-        code ||= []
+        @code ||= []
       end
 
       def load models, options = {}
