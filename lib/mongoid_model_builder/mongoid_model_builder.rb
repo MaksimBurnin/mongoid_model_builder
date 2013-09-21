@@ -95,7 +95,7 @@ module Mongoid
 
         # Field definition
         allowed_options = [:type, :default, :localize, :label]
-        model_append "field :#{field[:name]}, #{field.slice(allowed_options)}"
+        model_append "field :#{field[:name]}, #{field.slice(*allowed_options)}"
 
         # Length option automatically creates a maximum length validator
         field = {:validators => {:length => {:maximum => field[:length]}}}.deep_merge(field) if field[:length]
