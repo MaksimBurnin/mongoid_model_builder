@@ -15,5 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Mongoid::ModelBuilder::VERSION
 
-  gem.add_runtime_dependency('mongoid', '~> 3.1.4')
+  gem.add_runtime_dependency('mongoid', ['> 3', '< 6'])
 end
